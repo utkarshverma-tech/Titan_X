@@ -56,6 +56,11 @@ app.use(
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+app.get("/", (_req, res) => {
+  res.send("Titan X API is running. Access endpoints at /api");
+});
+
 app.use("/api", router);
+
 
 export default app;
