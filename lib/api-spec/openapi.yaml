@@ -1,0 +1,634 @@
+openapi: 3.1.0
+info:
+  # Do not change the title, if the title changes, the import paths will be broken
+  title: Api
+  version: 0.1.0
+  description: Titan X crowd monitoring and alert API
+servers:
+  - url: /api
+    description: Base API path
+tags:
+  - name: health
+    description: Health operations
+  - name: detections
+    description: AI detection operations
+  - name: alerts
+    description: Alert management
+  - name: analytics
+    description: Analytics and aggregates
+  - name: auth
+    description: Authentication operations
+  - name: settings
+    description: User settings management
+paths:
+  /healthz:
+    get:
+      operationId: healthCheck
+      tags: [health]
+      summary: Health check
+      responses:
+        "200":
+          description: Healthy
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/HealthStatus"
+
+  /detect:
+    post:
+      operationId: analyzeFrame
+      tags: [detections]
+      summary: Analyze a camera frame with the backend detector
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/DetectFrameBody"
+      responses:
+        "200":
+          description: Detection result
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DetectionResult"
+
+  /alerts:
+    get:
+      operationId: listAlerts
+      tags: [alerts]
+      summary: List alert history with optional pagination
+      parameters:
+        - name: page
+          in: query
+          schema:
+            type: integer
+            default: 1
+        - name: limit
+          in: query
+          schema:
+            type: integer
+            default: 20
+        - name: severity
+          in: query
+          schema:
+            type: string
+            enum: [low, medium, high]
+      responses:
+        "200":
+          description: Paginated alert list
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AlertListResponse"
+    post:
+      operationId: createAlert
+      tags: [alerts]
+      summary: Create a new alert (triggers Twilio if configured)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateAlertBody"
+      responses:
+        "201":
+          description: Alert created
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Alert"
+
+  /alerts/{id}:
+    get:
+      operationId: getAlert
+      tags: [alerts]
+      summary: Get a single alert by ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema:
+            type: integer
+      responses:
+        "200":
+          description: Alert record
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Alert"
+
+  /analytics/summary:
+    get:
+      operationId: getAnalyticsSummary
+      tags: [analytics]
+      summary: Dashboard summary (totals, averages, current status)
+      responses:
+        "200":
+          description: Analytics summary
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AnalyticsSummary"
+
+  /analytics/crowd-trend:
+    get:
+      operationId: getCrowdTrend
+      tags: [analytics]
+      summary: Crowd density trend data for charts (last N data points)
+      parameters:
+        - name: minutes
+          in: query
+          schema:
+            type: integer
+            default: 60
+      responses:
+        "200":
+          description: Time-series crowd data
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/CrowdTrendResponse"
+
+  /analytics/alert-frequency:
+    get:
+      operationId: getAlertFrequency
+      tags: [analytics]
+      summary: Alert frequency grouped by severity and hour
+      responses:
+        "200":
+          description: Alert frequency breakdown
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AlertFrequencyResponse"
+
+  /detections/log:
+    post:
+      operationId: logDetection
+      tags: [detections]
+      summary: Log a client-side detection event (person count, timestamp)
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/LogDetectionBody"
+      responses:
+        "201":
+          description: Logged
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/DetectionLog"
+
+  /auth/register:
+    post:
+      operationId: register
+      tags: [auth]
+      summary: Register a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AuthCredentials"
+      responses:
+        "201":
+          description: Registered
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+
+  /auth/login:
+    post:
+      operationId: login
+      tags: [auth]
+      summary: Login
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/AuthCredentials"
+      responses:
+        "200":
+          description: Logged in
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+
+  /auth/logout:
+    post:
+      operationId: logout
+      tags: [auth]
+      summary: Logout
+      responses:
+        "200":
+          description: Logged out
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  ok:
+                    type: boolean
+
+  /auth/me:
+    get:
+      operationId: authMe
+      tags: [auth]
+      summary: Get current session user
+      responses:
+        "200":
+          description: Current user
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/AuthResponse"
+
+  /settings:
+    get:
+      operationId: getSettings
+      tags: [settings]
+      summary: Get user settings
+      responses:
+        "200":
+          description: Settings record
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Settings"
+    put:
+      operationId: updateSettings
+      tags: [settings]
+      summary: Update user settings
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/UpdateSettingsBody"
+      responses:
+        "200":
+          description: Updated settings
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Settings"
+
+components:
+  schemas:
+    HealthStatus:
+      type: object
+      properties:
+        status:
+          type: string
+      required:
+        - status
+
+    DetectFrameBody:
+      type: object
+      properties:
+        imageBase64:
+          type: string
+          description: Base64-encoded JPEG frame
+        cameraId:
+          type: string
+        clientPersonCount:
+          type: integer
+          description: Person count from client-side TensorFlow.js
+      required:
+        - imageBase64
+
+    DetectionResult:
+      type: object
+      properties:
+        personCount:
+          type: integer
+        objects:
+          type: array
+          items:
+            $ref: "#/components/schemas/DetectedObject"
+        crowdDensity:
+          type: string
+          enum: [low, medium, high, critical]
+        anomalyDetected:
+          type: boolean
+        confidence:
+          type: number
+        processedAt:
+          type: string
+          format: date-time
+      required:
+        - personCount
+        - crowdDensity
+        - anomalyDetected
+        - confidence
+        - processedAt
+
+    DetectedObject:
+      type: object
+      properties:
+        label:
+          type: string
+        confidence:
+          type: number
+        bbox:
+          type: array
+          items:
+            type: number
+      required:
+        - label
+        - confidence
+        - bbox
+
+    Alert:
+      type: object
+      properties:
+        id:
+          type: integer
+        severity:
+          type: string
+          enum: [low, medium, high]
+        message:
+          type: string
+        personCount:
+          type: integer
+        cameraId:
+          type: string
+        location:
+          type: string
+        twilioSent:
+          type: boolean
+        createdAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - severity
+        - message
+        - personCount
+        - twilioSent
+        - createdAt
+
+    CreateAlertBody:
+      type: object
+      properties:
+        severity:
+          type: string
+          enum: [low, medium, high]
+        message:
+          type: string
+        personCount:
+          type: integer
+        cameraId:
+          type: string
+        location:
+          type: string
+        imageBase64:
+          type: string
+      required:
+        - severity
+        - message
+        - personCount
+
+    AlertListResponse:
+      type: object
+      properties:
+        alerts:
+          type: array
+          items:
+            $ref: "#/components/schemas/Alert"
+        total:
+          type: integer
+        page:
+          type: integer
+        totalPages:
+          type: integer
+      required:
+        - alerts
+        - total
+        - page
+        - totalPages
+
+    AnalyticsSummary:
+      type: object
+      properties:
+        totalAlerts:
+          type: integer
+        alertsToday:
+          type: integer
+        currentPersonCount:
+          type: integer
+        peakPersonCount:
+          type: integer
+        averageCrowdDensity:
+          type: string
+        anomaliesDetected:
+          type: integer
+        systemUptime:
+          type: string
+        alertsBySeverity:
+          type: object
+          properties:
+            low:
+              type: integer
+            medium:
+              type: integer
+            high:
+              type: integer
+          required:
+            - low
+            - medium
+            - high
+      required:
+        - totalAlerts
+        - alertsToday
+        - currentPersonCount
+        - peakPersonCount
+        - averageCrowdDensity
+        - anomaliesDetected
+        - systemUptime
+        - alertsBySeverity
+
+    CrowdTrendResponse:
+      type: object
+      properties:
+        dataPoints:
+          type: array
+          items:
+            $ref: "#/components/schemas/CrowdDataPoint"
+      required:
+        - dataPoints
+
+    CrowdDataPoint:
+      type: object
+      properties:
+        timestamp:
+          type: string
+          format: date-time
+        personCount:
+          type: integer
+        density:
+          type: string
+          enum: [low, medium, high, critical]
+      required:
+        - timestamp
+        - personCount
+        - density
+
+    AlertFrequencyResponse:
+      type: object
+      properties:
+        hourly:
+          type: array
+          items:
+            $ref: "#/components/schemas/HourlyAlertCount"
+        bySeverity:
+          type: object
+          properties:
+            low:
+              type: integer
+            medium:
+              type: integer
+            high:
+              type: integer
+          required:
+            - low
+            - medium
+            - high
+      required:
+        - hourly
+        - bySeverity
+
+    HourlyAlertCount:
+      type: object
+      properties:
+        hour:
+          type: string
+        count:
+          type: integer
+      required:
+        - hour
+        - count
+
+    LogDetectionBody:
+      type: object
+      properties:
+        personCount:
+          type: integer
+        cameraId:
+          type: string
+        fps:
+          type: number
+        performanceMode:
+          type: string
+          enum: [eco, balanced, turbo]
+      required:
+        - personCount
+
+    DetectionLog:
+      type: object
+      properties:
+        id:
+          type: integer
+        personCount:
+          type: integer
+        cameraId:
+          type: string
+        fps:
+          type: number
+        performanceMode:
+          type: string
+        loggedAt:
+          type: string
+          format: date-time
+      required:
+        - id
+        - personCount
+        - loggedAt
+
+    AuthCredentials:
+      type: object
+      properties:
+        email:
+          type: string
+          format: email
+        password:
+          type: string
+          minLength: 8
+      required: [email, password]
+
+    AuthResponse:
+      type: object
+      properties:
+        user:
+          $ref: "#/components/schemas/AuthUser"
+      required: [user]
+
+    AuthUser:
+      type: object
+      properties:
+        id:
+          type: integer
+        email:
+          type: string
+      required: [id, email]
+
+    Settings:
+      type: object
+      properties:
+        id:
+          type: integer
+        userId:
+          type: integer
+        twilioAccountSid:
+          type: string
+          nullable: true
+        twilioAuthToken:
+          type: string
+          nullable: true
+        twilioFromNumber:
+          type: string
+          nullable: true
+        twilioToNumber:
+          type: string
+          nullable: true
+        twilioEnabled:
+          type: boolean
+        densityThreshold:
+          type: integer
+        anomalySensitivity:
+          type: integer
+        createdAt:
+          type: string
+          format: date-time
+        updatedAt:
+          type: string
+          format: date-time
+      required: [id, userId, twilioEnabled, densityThreshold, anomalySensitivity, createdAt, updatedAt]
+
+    UpdateSettingsBody:
+      type: object
+      properties:
+        twilioAccountSid:
+          type: string
+          nullable: true
+        twilioAuthToken:
+          type: string
+          nullable: true
+        twilioFromNumber:
+          type: string
+          nullable: true
+        twilioToNumber:
+          type: string
+          nullable: true
+        twilioEnabled:
+          type: boolean
+        densityThreshold:
+          type: integer
+        anomalySensitivity:
+          type: integer

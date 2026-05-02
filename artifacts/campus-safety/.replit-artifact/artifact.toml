@@ -1,0 +1,31 @@
+kind = "web"
+previewPath = "/"
+title = "Titan X — Crowd monitor"
+version = "1.0.0"
+id = "artifacts/campus-safety"
+router = "path"
+
+[[integratedSkills]]
+name = "react-vite"
+version = "1.0.0"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 26194
+
+[services.development]
+run = "pnpm --filter @workspace/campus-safety run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/campus-safety", "run", "build" ]
+publicDir = "artifacts/campus-safety/dist/public"
+serve = "static"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "26194"
+BASE_PATH = "/"
