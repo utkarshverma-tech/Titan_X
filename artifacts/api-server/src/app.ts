@@ -48,7 +48,7 @@ app.use(
     name: "vanguard_session",
     keys: [sessionSecret],
     maxAge: 7 * 24 * 60 * 60 * 1000,
-    sameSite: "lax",
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
     httpOnly: true,
     secure: process.env.NODE_ENV === "production" && process.env.COOKIE_SECURE !== "0",
   }),
