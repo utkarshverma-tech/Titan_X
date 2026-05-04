@@ -20,12 +20,18 @@ export function Layout({ children }: { children: React.ReactNode }) {
   const { user, logout, isAuthLoading } = useAuth();
   const { data: health }             = useHealthCheck({ query: { refetchInterval: 30000, queryKey: getHealthCheckQueryKey() } });
   const [dark,  setDark]             = useState(true);
-  const [sound, setSound]            = useState(false);
+  const [sound, setSound]            = useState(() => {
+    try { return localStorage.getItem("titanx_sound") === "true"; } catch { return false; }
+  });
   const [menuOpen, setMenuOpen]      = useState(false);
 
   useEffect(() => {
     document.documentElement.classList.toggle("dark", dark);
   }, [dark]);
+
+  useEffect(() => {
+    try { localStorage.setItem("titanx_sound", String(sound)); } catch {}
+  }, [sound]);
 
   const online = health?.status === "ok";
 

@@ -4,6 +4,7 @@ import { useGetAnalyticsSummary, useListAlerts, useCreateAlert, getGetAnalyticsS
 import { AlertCircle, Activity, Cpu, CheckCircle, Video, Bell, BarChart2, Settings2 } from "lucide-react";
 import { format } from "date-fns";
 import { motion, AnimatePresence } from "framer-motion";
+import { playAlertBeep } from "@/lib/audio";
 
 type Tab = "camera" | "alerts" | "stats" | "controls";
 
@@ -17,10 +18,12 @@ export function Dashboard() {
   const { data: alertsData } = useListAlerts({ limit: 20 }, { query: { refetchInterval: 5000, queryKey: getListAlertsQueryKey({ limit: 20 }) } });
   const createAlert = useCreateAlert();
 
-  const handleAlert = () =>
+  const handleAlert = () => {
+    playAlertBeep();
     createAlert.mutate({
       data: { severity: "high", message: "Manual operator alert from command center.", personCount: count, cameraId: "CAM-01", location: "Main Quad" }
     });
+  };
 
   const densityColor = (d?: string) =>
     d === "critical" || d === "high" ? "text-red-400" : d === "medium" ? "text-yellow-400" : "text-green-400";

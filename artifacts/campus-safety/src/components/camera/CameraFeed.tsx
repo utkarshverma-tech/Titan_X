@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState, useCallback } from "react";
 import { useAnalyzeFrame, useCreateAlert, useLogDetection } from "@workspace/api-client-react";
+import { playAlertBeep } from "@/lib/audio";
 import { Camera, AlertCircle, RefreshCw, Download, Scan, EyeOff, Maximize2 } from "lucide-react";
 
 export type PerformanceMode = "eco" | "balanced" | "turbo";
@@ -179,6 +180,7 @@ export function CameraFeed({
                   const now = Date.now();
                   if (now - lastAutoAlertAt.current < AUTO_ALERT_COOLDOWN_MS) return;
                   lastAutoAlertAt.current = now;
+                  playAlertBeep();
                   createAlert.mutate({
                     data: {
                       severity: "high",
