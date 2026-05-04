@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, useCallback } from "react";
-import { useAnalyzeFrame, useCreateAlert } from "@workspace/api-client-react";
+import { useAnalyzeFrame, useCreateAlert, useLogDetection } from "@workspace/api-client-react";
 import { Camera, AlertCircle, RefreshCw, Download, Scan, EyeOff, Maximize2 } from "lucide-react";
 
 export type PerformanceMode = "eco" | "balanced" | "turbo";
@@ -51,7 +51,9 @@ export function CameraFeed({
 
   const analyzeMutation = useAnalyzeFrame();
   const createAlert = useCreateAlert();
+  const logDetection = useLogDetection();
   const lastAutoAlertAt = useRef(0);
+  const lastLogAt = useRef(0);
 
   // ── Camera setup ──────────────────────────────────────────────────────────
   useEffect(() => {
@@ -130,6 +132,14 @@ export function CameraFeed({
         const people = preds.filter((p: any) => p.class === "person");
         onDetect(people.length);
 
+        const currentNow = Date.now();
+        if (currentNow - lastLogAt.current >= 10000) {
+          lastLogAt.current = currentNow;
+          logDetection.mutate({
+            data: { personCount: people.length, cameraId: "CAM-01", performanceMode }
+          }).catch(() => {}); // fire and forget
+        }
+
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         if (showBboxes) {
           people.forEach((p: any) => {
@@ -195,6 +205,7 @@ export function CameraFeed({
     captureFrame,
     analyzeMutation,
     createAlert,
+    logDetection,
     onDetect,
     alertPersonThreshold,
     enableAutoAlerts,
