@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { CameraFeed, PerformanceMode } from "@/components/camera/CameraFeed";
-import { useGetAnalyticsSummary, useListAlerts, useCreateAlert, getGetAnalyticsSummaryQueryKey, getListAlertsQueryKey } from "@workspace/api-client-react";
+import { useGetAnalyticsSummary, useListAlerts, useCreateAlert, useGetSettings, getGetAnalyticsSummaryQueryKey, getListAlertsQueryKey, getGetSettingsQueryKey } from "@workspace/api-client-react";
 import { AlertCircle, Activity, Cpu, CheckCircle, Video, Bell, BarChart2, Settings2 } from "lucide-react";
 import { format } from "date-fns";
 import { motion, AnimatePresence } from "framer-motion";
@@ -16,6 +16,7 @@ export function Dashboard() {
 
   const { data: summary } = useGetAnalyticsSummary({ query: { refetchInterval: 8000, queryKey: getGetAnalyticsSummaryQueryKey() } });
   const { data: alertsData } = useListAlerts({ limit: 20 }, { query: { refetchInterval: 5000, queryKey: getListAlertsQueryKey({ limit: 20 }) } });
+  const { data: settings } = useGetSettings({ query: { queryKey: getGetSettingsQueryKey() } });
   const createAlert = useCreateAlert();
 
   const handleAlert = () => {
@@ -55,7 +56,14 @@ export function Dashboard() {
         <div className="col-span-6 flex flex-col gap-3">
           <PerfBar mode={mode} setMode={setMode} />
           <div className="flex-1">
-            <CameraFeed performanceMode={mode} onDetect={(c) => { setCount(c); setAnomaly(c > 10); }} anomalyDetected={anomaly} />
+            <CameraFeed 
+              performanceMode={mode} 
+              onDetect={(c) => { setCount(c); setAnomaly(c >= (settings?.densityThreshold ?? 5)); }} 
+              anomalyDetected={anomaly} 
+              enableBackendVerify={true}
+              enableAutoAlerts={true}
+              alertPersonThreshold={Math.max(1, (settings?.densityThreshold ?? 5) - 2)}
+            />
           </div>
         </div>
 
@@ -74,7 +82,14 @@ export function Dashboard() {
 
             {tab === "camera" && (
               <div className="flex flex-col gap-3 p-1">
-                <CameraFeed performanceMode={mode} onDetect={(c) => { setCount(c); setAnomaly(c > 10); }} anomalyDetected={anomaly} />
+                <CameraFeed 
+                  performanceMode={mode} 
+                  onDetect={(c) => { setCount(c); setAnomaly(c >= (settings?.densityThreshold ?? 5)); }} 
+                  anomalyDetected={anomaly} 
+                  enableBackendVerify={true}
+                  enableAutoAlerts={true}
+                  alertPersonThreshold={Math.max(1, (settings?.densityThreshold ?? 5) - 2)}
+                />
                 {/* Quick stats under camera */}
                 <div className="grid grid-cols-3 gap-2">
                   <StatCard label="LIVE COUNT" value={count} color="text-cyan-400" />
