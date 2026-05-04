@@ -50,14 +50,14 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   const login = useCallback(
     async (email: string, password: string) => {
-      await loginMut.mutateAsync({ email, password });
+      await loginMut.mutateAsync({ data: { email, password } });
     },
     [loginMut],
   );
 
   const register = useCallback(
     async (email: string, password: string) => {
-      await registerMut.mutateAsync({ email, password });
+      await registerMut.mutateAsync({ data: { email, password } });
     },
     [registerMut],
   );
