@@ -73,7 +73,7 @@ export function Analytics() {
         </div>
       </div>
 
-      <div className="grid grid-cols-4 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
         <SciFiPanel className="p-4" glowColor="primary">
           <div className="flex items-center gap-3">
             <div className="p-3 bg-primary/20 rounded-full text-primary">
@@ -123,7 +123,7 @@ export function Analytics() {
         </SciFiPanel>
       </div>
 
-      <div className="grid grid-cols-2 gap-4 flex-1 min-h-[400px]">
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 flex-1 min-h-[400px] pb-4">
         <SciFiPanel title="CROWD DENSITY TREND (LAST 60 MIN)" titleIcon={<Activity className="w-4 h-4" />}>
           <div className="w-full h-full min-h-[300px]">
             {isLoadingTrend ? (

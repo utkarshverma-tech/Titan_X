@@ -63,9 +63,9 @@ export function Dashboard() {
       </div>
 
       {/* ── Mobile layout (<md): tab content ───────────────────── */}
-      <div className="flex md:hidden flex-col flex-1 overflow-hidden">
+      <div className="flex md:hidden flex-col flex-1 overflow-hidden pb-16">
         <AnimatePresence mode="wait">
-          <motion.div key={tab} className="flex-1 overflow-y-auto pb-2"
+          <motion.div key={tab} className="flex-1 overflow-y-auto pb-6"
             initial={{ opacity: 0, y: 10 }} animate={{ opacity: 1, y: 0 }} exit={{ opacity: 0, y: -10 }}
             transition={{ duration: 0.18 }}>
 
@@ -159,7 +159,7 @@ export function Dashboard() {
       </div>
 
       {/* ── Mobile Bottom Nav ────────────────────────────────────── */}
-      <nav className="flex md:hidden shrink-0 border-t border-cyan-500/20 bg-black/90 backdrop-blur-xl">
+      <nav className="fixed bottom-0 left-0 right-0 z-50 flex md:hidden shrink-0 border-t border-cyan-500/20 bg-black/90 backdrop-blur-xl">
         {([
           { id: "camera" as Tab, icon: Video, label: "Camera", badge: undefined as number | undefined },
           { id: "alerts" as Tab, icon: Bell, label: "Alerts", badge: (alertsData?.alerts || []).filter(a => a.severity === "high").length },
