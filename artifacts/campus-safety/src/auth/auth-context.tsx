@@ -26,7 +26,7 @@ const AuthContext = createContext<AuthContextValue | null>(null);
 
 export function AuthProvider({ children }: { children: ReactNode }) {
   const qc = useQueryClient();
-  const { data, isPending } = useAuthMe({ query: { retry: false } });
+  const { data, isPending } = useAuthMe({ query: { queryKey: getAuthMeQueryKey(), retry: false } });
   const user: AuthUser | null | undefined = isPending ? undefined : (data?.user ?? null);
 
   const registerMut = useRegister({
