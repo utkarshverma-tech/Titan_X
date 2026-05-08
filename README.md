@@ -133,11 +133,11 @@ Visit `http://localhost:5173` in your browser. The frontend will automatically p
 
 | Dashboard | Real-time Camera Feed |
 |-----------|-----------------------|
-| <img src="https://via.placeholder.com/400x250.png?text=Dashboard+Screenshot" alt="Dashboard"> | <img src="https://via.placeholder.com/400x250.png?text=Camera+Feed+Screenshot" alt="Camera Feed"> |
+| ![Dashboard](./image1.png) | ![Camera Feed](./image2.png) |
 
 | Analytics & Insights | Settings & Configurations |
 |----------------------|---------------------------|
-| <img src="https://via.placeholder.com/400x250.png?text=Analytics+Screenshot" alt="Analytics"> | <img src="https://via.placeholder.com/400x250.png?text=Settings+Screenshot" alt="Settings"> |
+| ![Analytics](./image3.png) | ![Settings](./image4.png) |
 
 ---
 
