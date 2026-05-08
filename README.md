@@ -129,8 +129,6 @@ Visit `http://localhost:5173` in your browser. The frontend will automatically p
 
 ## 📸 Screenshots
 
-*(Add your screenshots here before pushing to GitHub!)*
-
 | Dashboard | Real-time Camera Feed |
 |-----------|-----------------------|
 | ![Dashboard](./image1.png) | ![Camera Feed](./image2.png) |
@@ -178,9 +176,7 @@ graph LR
 
 ## 🎬 Project Demo
 
-*(Replace this section with a link to your live demo, YouTube video, or a GIF of the project in action.)*
-
-**🔗 [Watch the Demo Video](https://youtube.com/)** | **🌐 [Live Website](https://your-deployment-link.com/)**
+**🌐 [Live Website](https://titan-x-campus-safety.vercel.app/)**
 
 ---
 
@@ -189,9 +185,9 @@ graph LR
 **Utkarsh Verma & Team**  
 *Academic / Group Project*
 
-[![LinkedIn](https://img.shields.io/badge/LinkedIn-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/your-profile)
-[![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/your-username)
-[![Portfolio](https://img.shields.io/badge/Portfolio-FF5722?style=for-the-badge&logo=todoist&logoColor=white)](https://your-portfolio.com)
+[![LinkedIn](https://img.shields.io/badge/LinkedIn-0A66C2?style=for-the-badge&logo=linkedin&logoColor=white)](https://www.linkedin.com/in/utkarshverma89)
+[![GitHub](https://img.shields.io/badge/GitHub-181717?style=for-the-badge&logo=github&logoColor=white)](https://github.com/utkarshverma-tech)
+[![Portfolio](https://img.shields.io/badge/Portfolio-FF5722?style=for-the-badge&logo=todoist&logoColor=white)](https://utkarshverma.in/)
 
 ---
 
